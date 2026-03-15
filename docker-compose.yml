@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  seeme:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - DATABASE_URL=file:./seeme.db
+      - JWT_SECRET=${JWT_SECRET:-seeme-production-secret}
+      - AI_PROVIDER=${AI_PROVIDER:-local}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    volumes:
+      - seeme-data:/app/server/prisma
+
+volumes:
+  seeme-data:
