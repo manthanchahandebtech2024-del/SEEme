@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String       @id @default(uuid())
+  email        String       @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  analyses     Analysis[]
+  gameProfile  GameProfile?
+  badges       Badge[]
+}
+
+model Analysis {
+  id             String   @id @default(uuid())
+  userId         String?
+  fileName       String
+  resumeText     String
+  jobDescription String
+  score          Int
+  breakdown      String
+  tier           String
+  createdAt      DateTime @default(now())
+  user           User?    @relation(fields: [userId], references: [id])
+}
+
+model GameProfile {
+  id            String @id @default(uuid())
+  userId        String @unique
+  totalXP       Int    @default(0)
+  level         Int    @default(1)
+  tier          String @default("bronze")
+  streak        Int    @default(0)
+  lastActivity  String @default("")
+  analysisCount Int    @default(0)
+  user          User   @relation(fields: [userId], references: [id])
+}
+
+model Badge {
+  id       String   @id @default(uuid())
+  userId   String
+  badgeId  String
+  earnedAt DateTime @default(now())
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, badgeId])
+}
